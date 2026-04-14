@@ -5,6 +5,7 @@ import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.Service
+import android.content.Context
 import android.content.Intent
 import android.location.Location
 import android.location.LocationManager
@@ -29,6 +30,18 @@ class MockLocationService : Service() {
         const val EXTRA_LNG = "EXTRA_LNG"
         private const val NOTIFICATION_ID = 1001
         private const val CHANNEL_ID = "mock_location_channel"
+        const val PREFS = "mock_state"
+        const val KEY_ACTIVE = "active"
+        const val KEY_LAT = "lat"
+        const val KEY_LNG = "lng"
+
+        fun getPersistedMock(context: Context): Pair<Double, Double>? {
+            val sp = context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
+            if (!sp.getBoolean(KEY_ACTIVE, false)) return null
+            val lat = java.lang.Double.longBitsToDouble(sp.getLong(KEY_LAT, 0L))
+            val lng = java.lang.Double.longBitsToDouble(sp.getLong(KEY_LNG, 0L))
+            return lat to lng
+        }
     }
 
     override fun onBind(intent: Intent?): IBinder? = null
@@ -43,10 +56,16 @@ class MockLocationService : Service() {
             ACTION_START -> {
                 val lat = intent.getDoubleExtra(EXTRA_LAT, 0.0)
                 val lng = intent.getDoubleExtra(EXTRA_LNG, 0.0)
+                getSharedPreferences(PREFS, MODE_PRIVATE).edit()
+                    .putBoolean(KEY_ACTIVE, true)
+                    .putLong(KEY_LAT, java.lang.Double.doubleToRawLongBits(lat))
+                    .putLong(KEY_LNG, java.lang.Double.doubleToRawLongBits(lng))
+                    .apply()
                 startForeground(NOTIFICATION_ID, buildNotification(lat, lng))
                 startMocking(lat, lng)
             }
             ACTION_STOP -> {
+                getSharedPreferences(PREFS, MODE_PRIVATE).edit().putBoolean(KEY_ACTIVE, false).apply()
                 stopMocking()
                 stopForeground(STOP_FOREGROUND_REMOVE)
                 stopSelf()

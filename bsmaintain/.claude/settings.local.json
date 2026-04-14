@@ -7,7 +7,11 @@
       "Bash(\"/c/Users/loucm/AppData/Local/Android/Sdk/platform-tools/adb.exe\" kill-server:*)",
       "Bash(\"/c/Users/loucm/AppData/Local/Android/Sdk/platform-tools/adb.exe\" start-server:*)",
       "Bash(./gradlew assembleDebug)",
-      "Bash(cp:*)"
+      "Bash(cp:*)",
+      "WebFetch(domain:autoproxy.cht.com.tw)",
+      "Bash(./gradlew tasks:*)",
+      "Bash(./gradlew.bat assembleDebug)",
+      "Bash(./gradlew.bat :app:dependencies --configuration debugRuntimeClasspath)"
     ]
   }
 }

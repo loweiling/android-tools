@@ -168,8 +168,18 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         mMap.isMyLocationEnabled = false
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) setupRealLocationListener()
 
-        mMap.setOnMarkerClickListener { marker ->
-            if (marker == myLocationMarker || marker.tag == null) return@setOnMarkerClickListener true
+        mMap.setOnMarkerClickListener { clicked ->
+            // 若點到「我的位置」三角形,轉派給其下方最近的站台 marker(螢幕距離)
+            val marker = if (clicked == myLocationMarker) {
+                val proj = mMap.projection
+                val myPt = proj.toScreenLocation(clicked.position)
+                allIconMarkers.minByOrNull {
+                    val p = proj.toScreenLocation(it.position)
+                    val dx = (p.x - myPt.x).toDouble(); val dy = (p.y - myPt.y).toDouble()
+                    dx * dx + dy * dy
+                } ?: return@setOnMarkerClickListener true
+            } else clicked
+            if (marker.tag == null) return@setOnMarkerClickListener true
 
             val prevSelected = lastSelectedMarker
             if (prevSelected != null && prevSelected != marker) {
@@ -215,7 +225,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
                 val currentPos = LatLng(location.latitude, location.longitude)
                 runOnUiThread {
                     if (myLocationMarker == null) {
-                        myLocationMarker = mMap.addMarker(MarkerOptions().position(currentPos).title("我的位置").anchor(0.5f, 0.5f).icon(createTriangleMarker()).zIndex(100f))
+                        myLocationMarker = mMap.addMarker(MarkerOptions().position(currentPos).title("我的位置").anchor(0.5f, 0.5f).icon(createTriangleMarker()).zIndex(100f).flat(true))
                     } else {
                         myLocationMarker?.position = currentPos
                     }
@@ -396,7 +406,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
             Log.d("PhotoScan", "開始掃描照片…")
 
             val matched = mutableMapOf<String, MutableList<Uri>>()
-            val siteNameMap = buildSiteNameMap()  // siteName → latLngKey
+            val siteNameMap = withContext(Dispatchers.Main) { buildSiteNameMap() }  // siteName → latLngKey（Marker API 必須在 main thread）
 
             val projection = arrayOf(MediaStore.Images.Media._ID)
             contentResolver.query(
@@ -468,16 +478,11 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     // ── 相機：關閉模擬定位後拍照 ──────────────────────────────
 
     private fun launchCamera() {
-        // 強制關閉模擬定位，確保拍照 GPS 為真實位置
         if (mockedMarkerPosition != null) {
             stopMockLocation()
             Toast.makeText(this, "已關閉模擬定位，使用真實 GPS 拍照", Toast.LENGTH_SHORT).show()
         }
-        val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
-        val photoFile = java.io.File(cacheDir, "PHOTO_${timeStamp}.jpg")
-        val uri = FileProvider.getUriForFile(this, "${packageName}.fileprovider", photoFile)
-        cameraPhotoUri = uri
-        takePictureLauncher.launch(uri)
+        startActivity(Intent(this, com.example.bsmaintain.camera.StationCameraActivity::class.java))
     }
 
     private fun openPhoto(uri: Uri) {
@@ -743,6 +748,14 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         if (count > 0) {
             currentBounds = boundsBuilder.build()
             focusOnCentroid()
+        }
+        // 還原先前的 mock 狀態（app 收到背景後 Activity 被重建時）
+        MockLocationService.getPersistedMock(this)?.let { (mLat, mLng) ->
+            val pos = LatLng(mLat, mLng)
+            mockedMarkerPosition = pos
+            allIconMarkers.forEach { m ->
+                refreshMarkerVisual(m, isSelected = (m == lastSelectedMarker), isMocking = (m.position == pos))
+            }
         }
         // Marker 載入完成後，掃描手機照片
         if (ActivityCompat.checkSelfPermission(this, readMediaPermission()) == PackageManager.PERMISSION_GRANTED) {

@@ -9,7 +9,7 @@ android {
 
     defaultConfig {
         applicationId = "com.example.bsmaintain"
-        minSdk = 24
+        minSdk = 31
         targetSdk = 35
         versionCode = 1
         versionName = "1.0"
@@ -65,6 +65,14 @@ dependencies {
     // 照片載入
     implementation(libs.coil.compose)
     implementation(libs.androidx.exifinterface)
+
+    // CameraX
+    implementation(libs.androidx.camera.core)
+    implementation(libs.androidx.camera.camera2)
+    implementation(libs.androidx.camera.lifecycle)
+    implementation(libs.androidx.camera.view)
+    implementation(libs.gson)
+    implementation(libs.androidx.work.runtime.ktx)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

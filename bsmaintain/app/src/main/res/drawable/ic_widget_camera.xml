@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="48dp"
+    android:height="48dp"
+    android:viewportWidth="48"
+    android:viewportHeight="48">
+    <!-- 正方形底 -->
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M8,8 L40,8 A4,4 0 0 1 44,12 L44,40 A4,4 0 0 1 40,44 L8,44 A4,4 0 0 1 4,40 L4,12 A4,4 0 0 1 8,8 Z" />
+    <!-- 取景器凸起 -->
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M18,4 L30,4 L32,8 L16,8 Z" />
+    <!-- 外鏡頭圈 -->
+    <path
+        android:fillColor="#FF1A73E8"
+        android:pathData="M24,26 m-10,0 a10,10 0 1,0 20,0 a10,10 0 1,0 -20,0 Z" />
+    <!-- 內鏡頭 -->
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M24,26 m-5,0 a5,5 0 1,0 10,0 a5,5 0 1,0 -10,0 Z" />
+    <!-- 閃燈 -->
+    <path
+        android:fillColor="#FFFF5252"
+        android:pathData="M38,14 m-1.6,0 a1.6,1.6 0 1,0 3.2,0 a1.6,1.6 0 1,0 -3.2,0 Z" />
+</vector>
