@@ -1,0 +1,34 @@
+# Built application files
+*.apk
+*.ap_
+*.aab
+
+# Files for the ART/Dalvik VM
+*.dex
+
+# Generated files
+**/build/
+bin/
+gen/
+out/
+
+# Gradle files
+.gradle/
+local.properties
+
+# IDE
+.idea/
+*.iml
+*.iws
+*.ipr
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Captures
+captures/
+
+# Keystore (security)
+*.jks
+*.keystore

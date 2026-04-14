@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__ide__getDiagnostics",
+      "Bash(adb devices:*)",
+      "Bash(/c/Users/loucm/AppData/Local/Android/Sdk/platform-tools/adb.exe devices:*)",
+      "Bash(\"/c/Users/loucm/AppData/Local/Android/Sdk/platform-tools/adb.exe\" kill-server:*)",
+      "Bash(\"/c/Users/loucm/AppData/Local/Android/Sdk/platform-tools/adb.exe\" start-server:*)",
+      "Bash(./gradlew assembleDebug)",
+      "Bash(cp:*)"
+    ]
+  }
+}

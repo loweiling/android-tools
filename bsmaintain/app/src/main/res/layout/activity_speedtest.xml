@@ -1,0 +1,816 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#0F1629">
+
+    <!-- Toolbar -->
+    <LinearLayout
+        android:id="@+id/toolbar_speedtest"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp"
+        android:background="#0F1629"
+        android:baselineAligned="false">
+
+        <ImageButton
+            android:id="@+id/btn_close"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@android:drawable/ic_menu_close_clear_cancel"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            app:tint="#FFFFFF"
+            android:contentDescription="@string/speedtest_close" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:baselineAligned="false">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/speedtest_icon"
+                android:textColor="#FFFFFF"
+                android:textSize="20sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/speedtest_title"
+                android:textColor="#FFFFFF"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:letterSpacing="0.1" />
+        </LinearLayout>
+
+        <ImageButton
+            android:id="@+id/btn_share"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@android:drawable/ic_menu_share"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            app:tint="#FFFFFF"
+            android:contentDescription="@string/speedtest_share" />
+
+        <ImageButton
+            android:id="@+id/btn_menu"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@android:drawable/ic_menu_more"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            app:tint="#FFFFFF"
+            android:contentDescription="@string/speedtest_menu" />
+    </LinearLayout>
+
+    <!-- Main Scrollable Content -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="56dp"
+        android:layout_marginBottom="56dp"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="12dp">
+
+            <!-- Speed Result Card -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardBackgroundColor="#1A2540"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="4dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <!-- Download and Upload Cards -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:baselineAligned="false">
+
+                        <!-- Download Card -->
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical"
+                            android:padding="14dp"
+                            android:background="@drawable/border_cyan_rounded"
+                            android:layout_marginEnd="8dp">
+
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal"
+                                android:gravity="center_vertical"
+                                android:baselineAligned="false">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="@string/speedtest_arrow_down"
+                                    android:textColor="#00E5FF"
+                                    android:textSize="16sp"
+                                    android:textStyle="bold" />
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="@string/speedtest_download"
+                                    android:textColor="#FFFFFF"
+                                    android:textSize="14sp"
+                                    android:layout_marginStart="4dp" />
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal"
+                                android:gravity="bottom"
+                                android:layout_marginTop="6dp"
+                                android:baselineAligned="false">
+
+                                <EditText
+                                    android:id="@+id/tv_download_speed"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="@string/speedtest_download_value"
+                                    android:textColor="#FFFFFF"
+                                    android:textSize="44sp"
+                                    android:textStyle="bold"
+                                    android:includeFontPadding="false"
+                                    android:inputType="numberDecimal"
+                                    android:background="@android:color/transparent"
+                                    android:minWidth="80dp"
+                                    android:padding="0dp"
+                                    android:singleLine="true" />
+                            </LinearLayout>
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/speedtest_mbps"
+                                android:textColor="#9E9E9E"
+                                android:textSize="13sp" />
+                        </LinearLayout>
+
+                        <!-- Upload Card -->
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical"
+                            android:padding="14dp"
+                            android:background="@drawable/border_purple_rounded">
+
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal"
+                                android:gravity="center_vertical"
+                                android:baselineAligned="false">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="@string/speedtest_arrow_up"
+                                    android:textColor="#AA44FF"
+                                    android:textSize="16sp"
+                                    android:textStyle="bold" />
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="@string/speedtest_upload"
+                                    android:textColor="#FFFFFF"
+                                    android:textSize="14sp"
+                                    android:layout_marginStart="4dp" />
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal"
+                                android:gravity="bottom"
+                                android:layout_marginTop="6dp"
+                                android:baselineAligned="false">
+
+                                <EditText
+                                    android:id="@+id/tv_upload_speed"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="@string/speedtest_upload_value"
+                                    android:textColor="#FFFFFF"
+                                    android:textSize="44sp"
+                                    android:textStyle="bold"
+                                    android:includeFontPadding="false"
+                                    android:inputType="numberDecimal"
+                                    android:background="@android:color/transparent"
+                                    android:minWidth="80dp"
+                                    android:padding="0dp"
+                                    android:singleLine="true" />
+                            </LinearLayout>
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/speedtest_mbps"
+                                android:textColor="#9E9E9E"
+                                android:textSize="13sp" />
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <!-- Ping Row -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:layout_marginTop="16dp"
+                        android:baselineAligned="false">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/speedtest_ping_label"
+                            android:textColor="#9E9E9E"
+                            android:textSize="12sp" />
+
+                        <!-- Ping value 1 -->
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:gravity="center_vertical"
+                            android:layout_marginStart="10dp"
+                            android:baselineAligned="false">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/speedtest_lightning"
+                                android:textSize="11sp"
+                                android:textColor="#FFD700" />
+
+                            <TextView
+                                android:id="@+id/tv_ping1"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/speedtest_ping1"
+                                android:textColor="#FFFFFF"
+                                android:textSize="13sp"
+                                android:layout_marginStart="2dp" />
+                        </LinearLayout>
+
+                        <!-- Ping value 2 -->
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:gravity="center_vertical"
+                            android:layout_marginStart="10dp"
+                            android:baselineAligned="false">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/speedtest_lightning"
+                                android:textSize="11sp"
+                                android:textColor="#FFD700" />
+
+                            <TextView
+                                android:id="@+id/tv_ping2"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/speedtest_ping2"
+                                android:textColor="#FFFFFF"
+                                android:textSize="13sp"
+                                android:layout_marginStart="2dp" />
+                        </LinearLayout>
+
+                        <!-- Ping value 3 -->
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:gravity="center_vertical"
+                            android:layout_marginStart="10dp"
+                            android:baselineAligned="false">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/speedtest_lightning"
+                                android:textSize="11sp"
+                                android:textColor="#FFD700" />
+
+                            <TextView
+                                android:id="@+id/tv_ping3"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/speedtest_ping3"
+                                android:textColor="#FFFFFF"
+                                android:textSize="13sp"
+                                android:layout_marginStart="2dp" />
+                        </LinearLayout>
+
+                        <!-- Jitter -->
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:gravity="end"
+                            android:text="@string/speedtest_jitter"
+                            android:textColor="#9E9E9E"
+                            android:textSize="11sp" />
+                    </LinearLayout>
+
+                    <!-- Ad Banner -->
+                    <ImageView
+                        android:id="@+id/iv_ad_banner"
+                        android:layout_width="match_parent"
+                        android:layout_height="160dp"
+                        android:layout_marginTop="16dp"
+                        android:background="#2A3550"
+                        android:scaleType="centerCrop"
+                        android:contentDescription="廣告"
+                        android:visibility="visible" />
+
+                    <!-- Test Type Icons Row -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center"
+                        android:layout_marginTop="20dp"
+                        android:layout_marginBottom="8dp"
+                        android:baselineAligned="false">
+
+                        <!-- Browser -->
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical"
+                            android:gravity="center">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/speedtest_icon_browser"
+                                android:textSize="28sp" />
+
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal"
+                                android:layout_marginTop="6dp"
+                                android:baselineAligned="false">
+                                <View android:layout_width="6dp" android:layout_height="6dp" android:background="@drawable/dot_green" android:layout_marginEnd="3dp"/>
+                                <View android:layout_width="6dp" android:layout_height="6dp" android:background="@drawable/dot_green" android:layout_marginEnd="3dp"/>
+                                <View android:layout_width="6dp" android:layout_height="6dp" android:background="@drawable/dot_green" android:layout_marginEnd="3dp"/>
+                                <View android:layout_width="6dp" android:layout_height="6dp" android:background="@drawable/dot_green" android:layout_marginEnd="3dp"/>
+                                <View android:layout_width="6dp" android:layout_height="6dp" android:background="@drawable/dot_green"/>
+                            </LinearLayout>
+                        </LinearLayout>
+
+                        <!-- Gamepad -->
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical"
+                            android:gravity="center">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/speedtest_icon_gamepad"
+                                android:textSize="28sp" />
+
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal"
+                                android:layout_marginTop="6dp"
+                                android:baselineAligned="false">
+                                <View android:layout_width="6dp" android:layout_height="6dp" android:background="@drawable/dot_green" android:layout_marginEnd="3dp"/>
+                                <View android:layout_width="6dp" android:layout_height="6dp" android:background="@drawable/dot_green" android:layout_marginEnd="3dp"/>
+                                <View android:layout_width="6dp" android:layout_height="6dp" android:background="@drawable/dot_green" android:layout_marginEnd="3dp"/>
+                                <View android:layout_width="6dp" android:layout_height="6dp" android:background="@drawable/dot_green" android:layout_marginEnd="3dp"/>
+                                <View android:layout_width="6dp" android:layout_height="6dp" android:background="@drawable/dot_green"/>
+                            </LinearLayout>
+                        </LinearLayout>
+
+                        <!-- Video -->
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical"
+                            android:gravity="center">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/speedtest_icon_video"
+                                android:textColor="#FFFFFF"
+                                android:textSize="28sp" />
+
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal"
+                                android:layout_marginTop="6dp"
+                                android:baselineAligned="false">
+                                <View android:layout_width="6dp" android:layout_height="6dp" android:background="@drawable/dot_green" android:layout_marginEnd="3dp"/>
+                                <View android:layout_width="6dp" android:layout_height="6dp" android:background="@drawable/dot_green" android:layout_marginEnd="3dp"/>
+                                <View android:layout_width="6dp" android:layout_height="6dp" android:background="@drawable/dot_green" android:layout_marginEnd="3dp"/>
+                                <View android:layout_width="6dp" android:layout_height="6dp" android:background="@drawable/dot_green" android:layout_marginEnd="3dp"/>
+                                <View android:layout_width="6dp" android:layout_height="6dp" android:background="@drawable/dot_green"/>
+                            </LinearLayout>
+                        </LinearLayout>
+
+                        <!-- Person -->
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical"
+                            android:gravity="center">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/speedtest_icon_person"
+                                android:textSize="28sp" />
+
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal"
+                                android:layout_marginTop="6dp"
+                                android:baselineAligned="false">
+                                <View android:layout_width="6dp" android:layout_height="6dp" android:background="@drawable/dot_green" android:layout_marginEnd="3dp"/>
+                                <View android:layout_width="6dp" android:layout_height="6dp" android:background="@drawable/dot_green" android:layout_marginEnd="3dp"/>
+                                <View android:layout_width="6dp" android:layout_height="6dp" android:background="@drawable/dot_green" android:layout_marginEnd="3dp"/>
+                                <View android:layout_width="6dp" android:layout_height="6dp" android:background="@drawable/dot_green" android:layout_marginEnd="3dp"/>
+                                <View android:layout_width="6dp" android:layout_height="6dp" android:background="@drawable/dot_green"/>
+                            </LinearLayout>
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <!-- Divider -->
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="#2A3550"
+                        android:layout_marginTop="12dp" />
+
+                    <!-- Carrier / Device Info -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginTop="12dp"
+                        android:gravity="center_vertical"
+                        android:baselineAligned="false">
+
+                        <!-- Left: carrier + device -->
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/speedtest_carrier"
+                                android:textColor="#FFFFFF"
+                                android:textSize="12sp" />
+
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal"
+                                android:gravity="center_vertical"
+                                android:layout_marginTop="2dp"
+                                android:baselineAligned="false">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="@string/speedtest_device"
+                                    android:textColor="#9E9E9E"
+                                    android:textSize="11sp" />
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="@string/speedtest_network_type"
+                                    android:textColor="#FFFFFF"
+                                    android:textSize="11sp"
+                                    android:background="#2A3550"
+                                    android:paddingStart="5dp"
+                                    android:paddingEnd="5dp"
+                                    android:paddingTop="1dp"
+                                    android:paddingBottom="1dp"
+                                    android:layout_marginStart="6dp" />
+                            </LinearLayout>
+                        </LinearLayout>
+
+                        <!-- Right: ISP info -->
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical"
+                            android:gravity="end">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/speedtest_isp"
+                                android:textColor="#FFFFFF"
+                                android:textSize="12sp" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/speedtest_location"
+                                android:textColor="#9E9E9E"
+                                android:textSize="11sp"
+                                android:layout_marginTop="2dp" />
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <!-- Test ID -->
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/speedtest_test_id"
+                        android:textColor="#9E9E9E"
+                        android:textSize="12sp"
+                        android:gravity="center"
+                        android:layout_marginTop="10dp" />
+
+                    <!-- Action Buttons -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginTop="10dp"
+                        android:baselineAligned="false">
+
+                        <TextView
+                            android:id="@+id/btn_details"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="@string/speedtest_details"
+                            android:textColor="#00E5FF"
+                            android:textSize="14sp"
+                            android:gravity="center"
+                            android:padding="10dp"
+                            android:clickable="true"
+                            android:focusable="true"
+                            android:background="?attr/selectableItemBackground" />
+
+                        <View
+                            android:layout_width="1dp"
+                            android:layout_height="match_parent"
+                            android:background="#2A3550" />
+
+                        <TextView
+                            android:id="@+id/btn_retest"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="@string/speedtest_retest"
+                            android:textColor="#00E5FF"
+                            android:textSize="14sp"
+                            android:gravity="center"
+                            android:padding="10dp"
+                            android:clickable="true"
+                            android:focusable="true"
+                            android:background="?attr/selectableItemBackground" />
+                    </LinearLayout>
+
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <!-- Feedback Card -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardBackgroundColor="#1A2540"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="4dp"
+                android:layout_marginTop="12dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:baselineAligned="false">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/speedtest_feedback_icon"
+                            android:textSize="20sp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/speedtest_feedback_title"
+                            android:textColor="#FFFFFF"
+                            android:textSize="16sp"
+                            android:textStyle="bold"
+                            android:layout_marginStart="8dp" />
+                    </LinearLayout>
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/speedtest_feedback_question"
+                        android:textColor="#CCCCCC"
+                        android:textSize="13sp"
+                        android:layout_marginTop="8dp" />
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+        </LinearLayout>
+    </ScrollView>
+
+    <!-- Bottom Navigation Bar -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:layout_gravity="bottom"
+        android:orientation="horizontal"
+        android:background="#1A2540"
+        android:elevation="8dp"
+        android:baselineAligned="false">
+
+        <!-- 速度 (active) -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:clickable="true"
+            android:focusable="true"
+            android:background="?attr/selectableItemBackground">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/nav_speed_icon"
+                android:textColor="#FFFFFF"
+                android:textSize="22sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/nav_speed"
+                android:textColor="#FFFFFF"
+                android:textSize="11sp"
+                android:layout_marginTop="2dp" />
+        </LinearLayout>
+
+        <!-- 影片 -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:clickable="true"
+            android:focusable="true"
+            android:background="?attr/selectableItemBackground">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/nav_video_icon"
+                android:textColor="#9E9E9E"
+                android:textSize="22sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/nav_video"
+                android:textColor="#9E9E9E"
+                android:textSize="11sp"
+                android:layout_marginTop="2dp" />
+        </LinearLayout>
+
+        <!-- Downdetector -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:clickable="true"
+            android:focusable="true"
+            android:background="?attr/selectableItemBackground">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/nav_downdetector_icon"
+                android:textColor="#9E9E9E"
+                android:textSize="22sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/nav_downdetector"
+                android:textColor="#9E9E9E"
+                android:textSize="11sp"
+                android:layout_marginTop="2dp" />
+        </LinearLayout>
+
+        <!-- 地圖 -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:clickable="true"
+            android:focusable="true"
+            android:background="?attr/selectableItemBackground">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/nav_map_icon"
+                android:textSize="22sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/nav_map"
+                android:textColor="#9E9E9E"
+                android:textSize="11sp"
+                android:layout_marginTop="2dp" />
+        </LinearLayout>
+
+        <!-- VPN -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:clickable="true"
+            android:focusable="true"
+            android:background="?attr/selectableItemBackground">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/nav_vpn_icon"
+                android:textSize="22sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/nav_vpn"
+                android:textColor="#9E9E9E"
+                android:textSize="11sp"
+                android:layout_marginTop="2dp" />
+        </LinearLayout>
+    </LinearLayout>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

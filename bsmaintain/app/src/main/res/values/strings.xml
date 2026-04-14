@@ -1,0 +1,57 @@
+<resources>
+    <string name="app_name">彰化基維</string>
+
+    <!-- Speedtest screen -->
+    <string name="speedtest_close">關閉</string>
+    <string name="speedtest_icon">⊙</string>
+    <string name="speedtest_title"> SPEEDTEST</string>
+    <string name="speedtest_share">分享</string>
+    <string name="speedtest_menu">選單</string>
+
+    <string name="speedtest_arrow_down">↓</string>
+    <string name="speedtest_download">下載</string>
+    <string name="speedtest_trophy">🏆</string>
+    <string name="speedtest_download_value">101</string>
+    <string name="speedtest_mbps">Mbps</string>
+
+    <string name="speedtest_arrow_up">↑</string>
+    <string name="speedtest_upload">上傳</string>
+    <string name="speedtest_upload_value">38.9</string>
+
+    <string name="speedtest_ping_label">Ping 秒數</string>
+    <string name="speedtest_lightning">⚡</string>
+    <string name="speedtest_ping1">25</string>
+    <string name="speedtest_ping2">365</string>
+    <string name="speedtest_ping3">199</string>
+    <string name="speedtest_jitter">⊙ 抖動 秒數 9</string>
+
+    <string name="speedtest_icon_browser">🖥</string>
+    <string name="speedtest_icon_gamepad">🎮</string>
+    <string name="speedtest_icon_video">▶</string>
+    <string name="speedtest_icon_person">👤</string>
+
+    <string name="speedtest_carrier">中華電信_Chunghw...</string>
+    <string name="speedtest_device">SM-N9810</string>
+    <string name="speedtest_network_type">LTE</string>
+    <string name="speedtest_isp">Infinirc</string>
+    <string name="speedtest_location">Taichung</string>
+    <string name="speedtest_test_id">測試 ID 11526265463</string>
+    <string name="speedtest_details">詳細結果</string>
+    <string name="speedtest_retest">再次測試</string>
+
+    <string name="speedtest_feedback_icon">💬</string>
+    <string name="speedtest_feedback_title">意見回饋</string>
+    <string name="speedtest_feedback_question">您對朋友或同事推薦中華電信_Chunghwa Telecom的可能性有多大？</string>
+
+    <!-- Bottom navigation -->
+    <string name="nav_speed_icon">⊙</string>
+    <string name="nav_speed">速度</string>
+    <string name="nav_video_icon">▷</string>
+    <string name="nav_video">影片</string>
+    <string name="nav_downdetector_icon">⚠</string>
+    <string name="nav_downdetector">Downdetector</string>
+    <string name="nav_map_icon">📍</string>
+    <string name="nav_map">地圖</string>
+    <string name="nav_vpn_icon">🔓</string>
+    <string name="nav_vpn">VPN</string>
+</resources>

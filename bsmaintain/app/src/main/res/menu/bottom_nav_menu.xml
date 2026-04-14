@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/nav_speed"
+        android:title="速度"
+        android:icon="@drawable/ic_nav_speed"
+        android:checked="true" />
+    <item
+        android:id="@+id/nav_video"
+        android:title="影片"
+        android:icon="@drawable/ic_nav_video" />
+    <item
+        android:id="@+id/nav_downdetector"
+        android:title="Downdetector"
+        android:icon="@drawable/ic_nav_downdetector" />
+    <item
+        android:id="@+id/nav_map"
+        android:title="地圖"
+        android:icon="@drawable/ic_nav_map" />
+    <item
+        android:id="@+id/nav_vpn"
+        android:title="VPN"
+        android:icon="@drawable/ic_nav_vpn" />
+</menu>
