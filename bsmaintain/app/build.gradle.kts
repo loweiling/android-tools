@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.google.services)
 }
 
 android {
@@ -73,6 +74,11 @@ dependencies {
     implementation(libs.androidx.camera.view)
     implementation(libs.gson)
     implementation(libs.androidx.work.runtime.ktx)
+
+    // Firebase（auto_login OTP 上傳 Firestore）
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.firestore.ktx)
+    implementation(libs.firebase.auth.ktx)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

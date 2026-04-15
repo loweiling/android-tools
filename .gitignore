@@ -32,3 +32,9 @@ captures/
 # Keystore (security)
 *.jks
 *.keystore
+
+# Firebase / GCP credentials
+google-services.json
+**/google-services.json
+*-service-account.json
+basestationmaintain-*.json

@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.example.bsmaintain.map.MapsActivity
+import com.example.bsmaintain.sms.SmsPermissions
 
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
@@ -47,5 +48,8 @@ class MainActivity : ComponentActivity() {
         btnOpenSpeedTest.setOnClickListener {
             startActivity(Intent(this, SpeedTestActivity::class.java))
         }
+
+        // SMS auto-login: 啟動時請求簡訊權限（Phase 1：只 Log/Toast 驗證接收）
+        SmsPermissions.requestIfNeeded(this)
     }
 }

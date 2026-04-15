@@ -9,6 +9,7 @@ import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import com.example.bsmaintain.network.RetrofitClient
+import com.example.bsmaintain.sms.FirebaseAuthBootstrap
 import com.example.bsmaintain.sync.StationSyncWorker
 import java.util.concurrent.TimeUnit
 
@@ -16,6 +17,7 @@ class BsMaintainApp : Application() {
     override fun onCreate() {
         super.onCreate()
         RetrofitClient.init(this)
+        FirebaseAuthBootstrap.ensureAnonymousSignedIn()
 
         val constraints = Constraints.Builder()
             .setRequiredNetworkType(NetworkType.CONNECTED)
