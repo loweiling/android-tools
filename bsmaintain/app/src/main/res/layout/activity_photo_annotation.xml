@@ -1,0 +1,296 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@android:color/black">
+
+    <!-- 頂部工具列 -->
+    <LinearLayout
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:background="#FF1A1A1A"
+        android:paddingHorizontal="8dp">
+
+        <ImageButton
+            android:id="@+id/btn_back"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@android:drawable/ic_menu_close_clear_cancel"
+            android:tint="@android:color/white"
+            android:contentDescription="返回"
+            android:scaleType="fitCenter"
+            android:padding="8dp" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+        <!-- 預覽模式：Edit 按鈕 -->
+        <TextView
+            android:id="@+id/btn_edit"
+            android:layout_width="wrap_content"
+            android:layout_height="36dp"
+            android:gravity="center"
+            android:text="編輯"
+            android:textColor="@android:color/white"
+            android:textSize="15sp"
+            android:paddingHorizontal="16dp"
+            android:background="@drawable/camera_control_bg" />
+
+        <!-- 編輯模式：復原、清除、儲存 (預設隱藏) -->
+        <ImageButton
+            android:id="@+id/btn_undo"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@android:drawable/ic_menu_revert"
+            android:tint="@android:color/white"
+            android:contentDescription="復原"
+            android:scaleType="fitCenter"
+            android:padding="8dp"
+            android:visibility="gone" />
+
+        <ImageButton
+            android:id="@+id/btn_clear"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="4dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@android:drawable/ic_menu_delete"
+            android:tint="@android:color/white"
+            android:contentDescription="清除全部"
+            android:scaleType="fitCenter"
+            android:padding="8dp"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/btn_save"
+            android:layout_width="wrap_content"
+            android:layout_height="36dp"
+            android:gravity="center"
+            android:text="儲存"
+            android:textColor="#FF4CAF50"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            android:paddingHorizontal="16dp"
+            android:background="@drawable/camera_control_bg"
+            android:layout_marginStart="4dp"
+            android:visibility="gone" />
+    </LinearLayout>
+
+    <!-- 照片 + 畫布疊加 -->
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <ImageView
+            android:id="@+id/photo_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="fitCenter"
+            android:contentDescription="照片" />
+
+        <com.example.bsmaintain.camera.DrawingView
+            android:id="@+id/drawing_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone" />
+
+        <!-- Inline 文字輸入 -->
+        <EditText
+            android:id="@+id/inline_text_input"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:minWidth="48dp"
+            android:background="@android:color/transparent"
+            android:textColor="#FFFF0000"
+            android:textSize="80sp"
+            android:cursorVisible="true"
+            android:singleLine="true"
+            android:imeOptions="actionDone"
+            android:hint="輸入"
+            android:textColorHint="#40FFFFFF"
+            android:visibility="gone"
+            android:importantForAutofill="no"
+            android:padding="0dp" />
+    </FrameLayout>
+
+    <!-- 底部編輯工具列 (預設隱藏) -->
+    <LinearLayout
+        android:id="@+id/edit_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="#FF1A1A1A"
+        android:visibility="gone">
+
+        <!-- 工具選擇：畫筆 / 文字 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:paddingHorizontal="16dp">
+
+            <TextView
+                android:id="@+id/tool_brush"
+                android:layout_width="wrap_content"
+                android:layout_height="36dp"
+                android:gravity="center"
+                android:text="畫筆"
+                android:textColor="@android:color/white"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                android:paddingHorizontal="20dp"
+                android:background="@drawable/camera_control_bg" />
+
+            <TextView
+                android:id="@+id/tool_text"
+                android:layout_width="wrap_content"
+                android:layout_height="36dp"
+                android:gravity="center"
+                android:text="文字"
+                android:textColor="#80FFFFFF"
+                android:textSize="15sp"
+                android:paddingHorizontal="20dp"
+                android:layout_marginStart="16dp"
+                android:background="@drawable/camera_control_bg" />
+        </LinearLayout>
+
+        <!-- 畫筆粗細 (畫筆模式才顯示) -->
+        <LinearLayout
+            android:id="@+id/brush_size_row"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:paddingHorizontal="32dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="粗細"
+                android:textColor="#80FFFFFF"
+                android:textSize="13sp" />
+
+            <SeekBar
+                android:id="@+id/brush_size_seekbar"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginHorizontal="12dp"
+                android:min="2"
+                android:max="30"
+                android:progress="8"
+                android:thumbTint="@android:color/white"
+                android:progressTint="@android:color/white" />
+
+            <TextView
+                android:id="@+id/brush_size_label"
+                android:layout_width="30dp"
+                android:layout_height="wrap_content"
+                android:text="8"
+                android:textColor="@android:color/white"
+                android:textSize="13sp"
+                android:gravity="center" />
+        </LinearLayout>
+
+        <!-- 文字大小 (文字模式才顯示) -->
+        <LinearLayout
+            android:id="@+id/text_size_row"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:paddingHorizontal="32dp"
+            android:visibility="gone">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="字體"
+                android:textColor="#80FFFFFF"
+                android:textSize="13sp" />
+
+            <SeekBar
+                android:id="@+id/text_size_seekbar"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginHorizontal="12dp"
+                android:min="40"
+                android:max="200"
+                android:progress="80"
+                android:thumbTint="@android:color/white"
+                android:progressTint="@android:color/white" />
+
+            <TextView
+                android:id="@+id/text_size_label"
+                android:layout_width="30dp"
+                android:layout_height="wrap_content"
+                android:text="80"
+                android:textColor="@android:color/white"
+                android:textSize="13sp"
+                android:gravity="center" />
+        </LinearLayout>
+
+        <!-- 顏色選擇列 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:paddingHorizontal="16dp"
+            android:paddingBottom="8dp">
+
+            <View
+                android:id="@+id/color_red"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_marginHorizontal="6dp"
+                android:background="@drawable/color_circle_red" />
+
+            <View
+                android:id="@+id/color_yellow"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_marginHorizontal="6dp"
+                android:background="@drawable/color_circle_yellow" />
+
+            <View
+                android:id="@+id/color_green"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_marginHorizontal="6dp"
+                android:background="@drawable/color_circle_green" />
+
+            <View
+                android:id="@+id/color_blue"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_marginHorizontal="6dp"
+                android:background="@drawable/color_circle_blue" />
+
+            <View
+                android:id="@+id/color_white"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_marginHorizontal="6dp"
+                android:background="@drawable/color_circle_white" />
+
+            <View
+                android:id="@+id/color_black"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_marginHorizontal="6dp"
+                android:background="@drawable/color_circle_black" />
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>

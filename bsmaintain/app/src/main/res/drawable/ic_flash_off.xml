@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <!-- Flash bolt with slash -->
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M17,7H13.5L15.5,3H7L5,13H9L7,21L17,7Z" />
+    <!-- Slash line -->
+    <path
+        android:strokeColor="#FFFF0000"
+        android:strokeWidth="2"
+        android:pathData="M3,3L21,21" />
+</vector>

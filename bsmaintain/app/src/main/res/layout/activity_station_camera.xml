@@ -9,6 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
+    <!-- 上方站台資訊 -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -46,16 +47,173 @@
             android:visibility="gone" />
     </LinearLayout>
 
-    <ImageButton
-        android:id="@+id/shutter_button"
-        android:layout_width="72dp"
-        android:layout_height="72dp"
-        android:layout_gravity="bottom|center_horizontal"
-        android:layout_marginBottom="36dp"
-        android:background="@drawable/shutter_bg"
-        android:contentDescription="拍照"
-        android:src="@android:drawable/ic_menu_camera"
-        android:tint="@android:color/black"
-        android:scaleType="fitCenter"
-        android:padding="16dp" />
+    <!-- 右側控制按鈕列 -->
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end|center_vertical"
+        android:orientation="vertical"
+        android:layout_marginEnd="16dp"
+        android:padding="8dp">
+
+        <!-- 翻轉鏡頭 -->
+        <ImageButton
+            android:id="@+id/btn_flip_camera"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:background="@drawable/camera_control_bg"
+            android:src="@drawable/ic_camera_flip"
+            android:scaleType="fitCenter"
+            android:padding="10dp"
+            android:contentDescription="翻轉鏡頭" />
+
+        <!-- 閃光燈 -->
+        <ImageButton
+            android:id="@+id/btn_flash"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/camera_control_bg"
+            android:src="@drawable/ic_flash_off"
+            android:scaleType="fitCenter"
+            android:padding="10dp"
+            android:contentDescription="閃光燈" />
+    </LinearLayout>
+
+    <!-- 縮放比例文字 -->
+    <TextView
+        android:id="@+id/zoom_ratio_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal|bottom"
+        android:layout_marginBottom="180dp"
+        android:background="#80000000"
+        android:paddingHorizontal="12dp"
+        android:paddingVertical="4dp"
+        android:text="1.0x"
+        android:textColor="@android:color/white"
+        android:textSize="14sp"
+        android:visibility="gone" />
+
+    <!-- 底部控制列 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:orientation="vertical"
+        android:background="#80000000"
+        android:paddingBottom="24dp"
+        android:paddingTop="12dp">
+
+        <!-- 拍照/錄影模式切換 -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:orientation="horizontal"
+            android:layout_marginBottom="16dp">
+
+            <TextView
+                android:id="@+id/mode_photo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="拍照"
+                android:textColor="@android:color/white"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:paddingHorizontal="16dp"
+                android:paddingVertical="6dp" />
+
+            <TextView
+                android:id="@+id/mode_video"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="錄影"
+                android:textColor="#80FFFFFF"
+                android:textSize="16sp"
+                android:paddingHorizontal="16dp"
+                android:paddingVertical="6dp" />
+        </LinearLayout>
+
+        <!-- 縮圖 + 快門 + 翻轉（底部一排） -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <!-- 左下角：最後拍攝的縮圖 -->
+            <FrameLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center">
+
+                <ImageView
+                    android:id="@+id/thumbnail_preview"
+                    android:layout_width="52dp"
+                    android:layout_height="52dp"
+                    android:layout_gravity="center"
+                    android:background="@drawable/thumbnail_circle"
+                    android:clipToOutline="true"
+                    android:scaleType="centerCrop"
+                    android:visibility="gone"
+                    android:contentDescription="最近拍攝" />
+            </FrameLayout>
+
+            <!-- 中間：快門/錄影按鈕 -->
+            <FrameLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center">
+
+                <ImageButton
+                    android:id="@+id/shutter_button"
+                    android:layout_width="72dp"
+                    android:layout_height="72dp"
+                    android:layout_gravity="center"
+                    android:background="@drawable/shutter_bg"
+                    android:contentDescription="拍照"
+                    android:src="@android:drawable/ic_menu_camera"
+                    android:tint="@android:color/black"
+                    android:scaleType="fitCenter"
+                    android:padding="16dp" />
+            </FrameLayout>
+
+            <!-- 右邊：編輯按鈕 -->
+            <FrameLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center">
+
+                <ImageButton
+                    android:id="@+id/btn_edit_photo"
+                    android:layout_width="44dp"
+                    android:layout_height="44dp"
+                    android:layout_gravity="center"
+                    android:background="@drawable/camera_control_bg"
+                    android:src="@android:drawable/ic_menu_edit"
+                    android:tint="@android:color/white"
+                    android:scaleType="fitCenter"
+                    android:padding="10dp"
+                    android:contentDescription="編輯照片"
+                    android:visibility="gone" />
+            </FrameLayout>
+        </LinearLayout>
+
+        <!-- 錄影計時 -->
+        <TextView
+            android:id="@+id/recording_timer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="8dp"
+            android:text="00:00"
+            android:textColor="#FFFF5252"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:visibility="gone" />
+    </LinearLayout>
 </FrameLayout>

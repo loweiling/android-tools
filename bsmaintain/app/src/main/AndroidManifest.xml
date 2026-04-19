@@ -15,8 +15,10 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" android:maxSdkVersion="32" />
     <uses-permission android:name="android.permission.ACCESS_MEDIA_LOCATION" />
     <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="28" />
     <uses-feature android:name="android.hardware.camera" android:required="false" />
+    <uses-feature android:name="android.hardware.telephony" android:required="false" />
     <application
         android:name=".BsMaintainApp"
         android:allowBackup="true"
@@ -66,10 +68,14 @@
         <activity
             android:name=".camera.StationCameraActivity"
             android:exported="true"
-            android:icon="@drawable/ic_widget_camera"
+            android:icon="@mipmap/ic_station_camera"
             android:label="站台相機"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.BsMaintain">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
             <intent-filter>
                 <action android:name="android.media.action.STILL_IMAGE_CAMERA" />
                 <category android:name="android.intent.category.DEFAULT" />
@@ -87,6 +93,24 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
+
+        <activity
+            android:name=".camera.PhotoAnnotationActivity"
+            android:exported="false"
+            android:label="照片標記"
+            android:theme="@style/Theme.BsMaintain" />
+
+        <activity
+            android:name=".camera.GalleryActivity"
+            android:exported="false"
+            android:label="BsMaintain 相簿"
+            android:theme="@style/Theme.BsMaintain" />
+
+        <activity
+            android:name=".camera.PhotoViewerActivity"
+            android:exported="false"
+            android:label="照片瀏覽"
+            android:theme="@style/Theme.BsMaintain" />
 
         <!-- SMS auto-login receiver -->
         <receiver
