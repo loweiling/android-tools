@@ -97,7 +97,7 @@
             android:scaleType="fitCenter"
             android:contentDescription="照片" />
 
-        <com.example.bsmaintain.camera.DrawingView
+        <com.wllo.bsmaintain.camera.DrawingView
             android:id="@+id/drawing_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"

@@ -70,6 +70,8 @@
             android:exported="true"
             android:icon="@mipmap/ic_station_camera"
             android:label="站台相機"
+            android:launchMode="singleTask"
+            android:taskAffinity=":camera"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.BsMaintain">
             <intent-filter>
