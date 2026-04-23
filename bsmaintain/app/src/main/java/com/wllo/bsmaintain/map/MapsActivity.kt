@@ -26,6 +26,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -52,6 +53,9 @@ import androidx.core.app.ActivityCompat
 import androidx.lifecycle.lifecycleScope
 import coil.compose.AsyncImage
 import com.wllo.bsmaintain.R
+import com.wllo.bsmaintain.camera.PhotoSiteNameStore
+import com.wllo.bsmaintain.camera.PhotoViewerActivity
+import com.wllo.bsmaintain.camera.XmpReader
 import com.wllo.bsmaintain.network.RetrofitClient
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -407,50 +411,72 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
             val matched = mutableMapOf<String, MutableList<Uri>>()
             val siteNameMap = withContext(Dispatchers.Main) { buildSiteNameMap() }  // siteName → latLngKey（Marker API 必須在 main thread）
+            // Sorted longest-first so contains() picks the most specific siteName.
+            val knownSiteNames = siteNameMap.keys.sortedByDescending { it.length }
 
-            val projection = arrayOf(MediaStore.Images.Media._ID)
+            val projection = arrayOf(
+                MediaStore.Images.Media._ID,
+                MediaStore.Images.Media.DISPLAY_NAME
+            )
             contentResolver.query(
                 MediaStore.Images.Media.EXTERNAL_CONTENT_URI, projection, null, null, null
             )?.use { cursor ->
                 val idCol = cursor.getColumnIndexOrThrow(MediaStore.Images.Media._ID)
+                val nameCol = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DISPLAY_NAME)
                 while (cursor.moveToNext()) {
                     val id = cursor.getLong(idCol)
+                    val displayName = cursor.getString(nameCol)
                     val uri = ContentUris.withAppendedId(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, id)
                     try {
                         val originalUri = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q)
                             MediaStore.setRequireOriginal(uri) else uri
 
+                        // 1. PhotoSiteNameStore（GalleryActivity 批次指派 / PhotoViewer 單張指派 / 站台相機拍攝皆寫入）
+                        val storedKey = displayName
+                            ?.let { PhotoSiteNameStore.get(this@MapsActivity, it) }
+                            ?.let { siteNameMap[it] }
+                        if (storedKey != null) {
+                            matched.getOrPut(storedKey) { mutableListOf() }.add(uri)
+                            continue
+                        }
+
+                        // 2. XMP dc:title（UTF-8 安全；站台相機 + PhotoMetadataWriter 寫入；給已從外部 sync 進來、SharedPrefs 沒紀錄的照片）
+                        val xmpTitle = try {
+                            contentResolver.openInputStream(originalUri)?.use { XmpReader.readTitle(it) }
+                        } catch (_: Exception) {
+                            try { contentResolver.openInputStream(uri)?.use { XmpReader.readTitle(it) } } catch (_: Exception) { null }
+                        }
+                        val xmpKey = xmpTitle?.takeIf { it.isNotBlank() }?.let { v ->
+                            siteNameMap[v] ?: knownSiteNames.firstOrNull { v.contains(it) }?.let { siteNameMap[it] }
+                        }
+                        if (xmpKey != null) {
+                            matched.getOrPut(xmpKey) { mutableListOf() }.add(uri)
+                            continue
+                        }
+
+                        // 3. EXIF Title（純 ASCII 歷史照片）+ 4. GPS 距離
                         var matchedByTitle = false
                         val latLong = FloatArray(2)
                         var hasGps = false
-
-                        // 讀取 EXIF（一次讀取 Title + GPS）
                         val exif = try {
                             contentResolver.openInputStream(originalUri)?.use { ExifInterface(it) }
                         } catch (_: UnsupportedOperationException) {
                             contentResolver.openInputStream(uri)?.use { ExifInterface(it) }
                         }
-
                         if (exif != null) {
-                            // 優先：EXIF Title 比對 siteName
                             val title = exif.getAttribute(ExifInterface.TAG_IMAGE_DESCRIPTION)
                                 ?: exif.getAttribute(ExifInterface.TAG_USER_COMMENT)
                             if (!title.isNullOrBlank()) {
-                                for ((siteName, key) in siteNameMap) {
-                                    if (title.contains(siteName, ignoreCase = true)) {
-                                        matched.getOrPut(key) { mutableListOf() }.add(uri)
-                                        matchedByTitle = true
-                                        break
-                                    }
+                                val key = knownSiteNames
+                                    .firstOrNull { title.contains(it, ignoreCase = true) }
+                                    ?.let { siteNameMap[it] }
+                                if (key != null) {
+                                    matched.getOrPut(key) { mutableListOf() }.add(uri)
+                                    matchedByTitle = true
                                 }
                             }
-
-                            // 輔助：GPS 距離比對（僅在 Title 未命中時）
-                            if (!matchedByTitle) {
-                                hasGps = exif.getLatLong(latLong)
-                            }
+                            if (!matchedByTitle) hasGps = exif.getLatLong(latLong)
                         }
-
                         if (!matchedByTitle && hasGps) {
                             for (pos in sitePositions) {
                                 if (distanceBetween(latLong[0].toDouble(), latLong[1].toDouble(), pos.latitude, pos.longitude) <= PHOTO_MATCH_METERS) {
@@ -487,10 +513,12 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         })
     }
 
-    private fun openPhoto(uri: Uri) {
-        startActivity(Intent(Intent.ACTION_VIEW).apply {
-            setDataAndType(uri, "image/*")
-            flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
+    private fun openPhoto(photos: List<Uri>, index: Int) {
+        val title = selectedData?.get("站名")?.asString?.replace("\"", "")
+        startActivity(Intent(this, PhotoViewerActivity::class.java).apply {
+            putParcelableArrayListExtra(PhotoViewerActivity.EXTRA_URIS, ArrayList(photos))
+            putExtra(PhotoViewerActivity.EXTRA_INDEX, index)
+            title?.let { putExtra(PhotoViewerActivity.EXTRA_GROUP_TITLE, it) }
         })
     }
 
@@ -598,7 +626,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
                         )
                         Spacer(modifier = Modifier.height(6.dp))
                         LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                            items(photos) { uri ->
+                            itemsIndexed(photos) { index, uri ->
                                 AsyncImage(
                                     model = uri,
                                     contentDescription = null,
@@ -606,7 +634,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
                                     modifier = Modifier
                                         .size(80.dp)
                                         .clip(RoundedCornerShape(8.dp))
-                                        .clickable { openPhoto(uri) }
+                                        .clickable { openPhoto(photos, index) }
                                 )
                             }
                         }

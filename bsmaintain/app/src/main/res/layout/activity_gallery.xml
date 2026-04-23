@@ -5,7 +5,7 @@
     android:orientation="vertical"
     android:background="@android:color/black">
 
-    <!-- 頂部列 -->
+    <!-- 頂部列：返回 + 站台搜尋（autocomplete） -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="56dp"
@@ -25,15 +25,141 @@
             android:scaleType="fitCenter"
             android:padding="8dp" />
 
-        <TextView
+        <AutoCompleteTextView
+            android:id="@+id/station_search"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="BsMaintain 相簿"
+            android:layout_marginStart="8dp"
+            android:hint="搜尋站台..."
             android:textColor="@android:color/white"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:layout_marginStart="12dp" />
+            android:textColorHint="#AAAAAA"
+            android:textSize="14sp"
+            android:singleLine="true"
+            android:inputType="text"
+            android:imeOptions="actionSearch"
+            android:completionThreshold="1"
+            android:background="@android:color/transparent" />
+
+        <ImageButton
+            android:id="@+id/btn_clear_search"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@android:drawable/ic_menu_close_clear_cancel"
+            android:tint="#AAAAAA"
+            android:contentDescription="清除"
+            android:scaleType="fitCenter"
+            android:padding="10dp"
+            android:visibility="gone" />
+
+        <ImageButton
+            android:id="@+id/btn_export_sitemap"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@android:drawable/ic_menu_save"
+            android:tint="@android:color/white"
+            android:contentDescription="匯出站名對照（給桌機同步用）"
+            android:scaleType="fitCenter"
+            android:padding="10dp" />
+    </LinearLayout>
+
+    <!-- Backfill 進度列：掃照片比對站台時顯示，完成後自動隱藏 -->
+    <LinearLayout
+        android:id="@+id/backfill_overlay"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="#FF1F2937"
+        android:paddingHorizontal="12dp"
+        android:paddingVertical="8dp"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/backfill_label"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="回填中…"
+            android:textColor="@android:color/white"
+            android:textSize="13sp" />
+
+        <ProgressBar
+            android:id="@+id/backfill_progress"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="match_parent"
+            android:layout_height="4dp"
+            android:layout_marginTop="4dp"
+            android:max="100"
+            android:progress="0" />
+    </LinearLayout>
+
+    <!-- 側邊 tag：scroll 時顯示目前所屬群組 -->
+    <TextView
+        android:id="@+id/current_group_label"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#CC000000"
+        android:paddingHorizontal="12dp"
+        android:paddingVertical="6dp"
+        android:textColor="#FFCC44"
+        android:textSize="13sp"
+        android:textStyle="bold"
+        android:visibility="gone" />
+
+    <!-- 多選模式工具列（長按進入） -->
+    <LinearLayout
+        android:id="@+id/selection_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:background="#FF2C5282"
+        android:paddingHorizontal="8dp"
+        android:visibility="gone">
+
+        <ImageButton
+            android:id="@+id/btn_selection_cancel"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@android:drawable/ic_menu_close_clear_cancel"
+            android:tint="@android:color/white"
+            android:contentDescription="取消多選"
+            android:scaleType="fitCenter"
+            android:padding="8dp" />
+
+        <TextView
+            android:id="@+id/selection_count"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginStart="12dp"
+            android:text="已選 0 張"
+            android:textColor="@android:color/white"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <ImageButton
+            android:id="@+id/btn_bulk_delete"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@android:drawable/ic_menu_delete"
+            android:tint="@android:color/white"
+            android:contentDescription="刪除選取照片"
+            android:scaleType="fitCenter"
+            android:padding="8dp" />
+
+        <ImageButton
+            android:id="@+id/btn_bulk_assign"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/ic_tag_assign"
+            android:contentDescription="指派站台"
+            android:scaleType="fitCenter"
+            android:padding="8dp" />
     </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView

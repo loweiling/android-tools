@@ -19,8 +19,11 @@ import android.os.Looper
 import android.provider.MediaStore
 import android.util.Log
 import android.view.MotionEvent
+import android.view.OrientationEventListener
 import android.view.ScaleGestureDetector
+import android.view.Surface
 import android.view.View
+import android.view.animation.OvershootInterpolator
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
@@ -75,9 +78,11 @@ class StationCameraActivity : AppCompatActivity() {
     private lateinit var btnEditPhoto: ImageButton
     private lateinit var recordingTimer: TextView
     private lateinit var zoomRatioText: TextView
+    private lateinit var shutterFlash: View
 
     private var imageCapture: ImageCapture? = null
     private var videoCapture: VideoCapture<Recorder>? = null
+    private var orientationListener: OrientationEventListener? = null
     private var activeRecording: Recording? = null
     private var camera: Camera? = null
     private val executor = Executors.newSingleThreadExecutor()
@@ -172,6 +177,7 @@ class StationCameraActivity : AppCompatActivity() {
         btnEditPhoto = findViewById(R.id.btn_edit_photo)
         recordingTimer = findViewById(R.id.recording_timer)
         zoomRatioText = findViewById(R.id.zoom_ratio_text)
+        shutterFlash = findViewById(R.id.shutter_flash)
 
         locationManager = getSystemService(LOCATION_SERVICE) as LocationManager
 
@@ -227,6 +233,34 @@ class StationCameraActivity : AppCompatActivity() {
         }
 
         loadLastPhoto()
+
+        // Physical-orientation tracking so CameraX writes correct EXIF rotation.
+        // Activity is locked to portrait (display rotation always 0), so without this
+        // listener a photo taken with the phone held sideways still comes out with
+        // ORIENTATION_NORMAL → viewers show landscape pixels as-is (sideways).
+        orientationListener = object : OrientationEventListener(this) {
+            override fun onOrientationChanged(orientation: Int) {
+                if (orientation == ORIENTATION_UNKNOWN) return
+                val rotation = when (orientation) {
+                    in 45 until 135 -> Surface.ROTATION_270
+                    in 135 until 225 -> Surface.ROTATION_180
+                    in 225 until 315 -> Surface.ROTATION_90
+                    else -> Surface.ROTATION_0
+                }
+                imageCapture?.targetRotation = rotation
+                videoCapture?.targetRotation = rotation
+            }
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        orientationListener?.let { if (it.canDetectOrientation()) it.enable() }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        orientationListener?.disable()
     }
 
     private fun loadLastPhoto() {
@@ -235,27 +269,29 @@ class StationCameraActivity : AppCompatActivity() {
                 MediaStore.Images.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY)
             else MediaStore.Images.Media.EXTERNAL_CONTENT_URI
 
-            val projection = arrayOf(MediaStore.Images.Media._ID)
-            val siteName = selectedStationName
-            val selection: String?
-            val selectionArgs: Array<String>?
-            if (siteName.isNotBlank()) {
-                selection = "${MediaStore.Images.Media.DESCRIPTION} = ?"
-                selectionArgs = arrayOf(siteName)
-            } else {
-                selection = "${MediaStore.Images.Media.DISPLAY_NAME} LIKE ? OR " +
-                    "${MediaStore.Images.Media.DISPLAY_NAME} LIKE ? OR " +
-                    "${MediaStore.Images.Media.DISPLAY_NAME} LIKE ?"
-                selectionArgs = arrayOf("STATION_%", "OTHERIMG_%", "ANNOTATED_%")
-            }
+            val projection = arrayOf(
+                MediaStore.Images.Media._ID,
+                MediaStore.Images.Media.DISPLAY_NAME
+            )
+            val selection = "${MediaStore.Images.Media.DISPLAY_NAME} LIKE ? OR " +
+                "${MediaStore.Images.Media.DISPLAY_NAME} LIKE ? OR " +
+                "${MediaStore.Images.Media.DISPLAY_NAME} LIKE ?"
+            val selectionArgs = arrayOf("STATION_%", "OTHERIMG_%", "ANNOTATED_%")
             val sortOrder = "${MediaStore.Images.Media.DATE_ADDED} DESC"
 
+            val siteFilter = selectedStationName.takeIf { it.isNotBlank() }
+
             contentResolver.query(collection, projection, selection, selectionArgs, sortOrder)?.use { cursor ->
-                if (cursor.moveToFirst()) {
-                    val id = cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.Images.Media._ID))
+                val idCol = cursor.getColumnIndexOrThrow(MediaStore.Images.Media._ID)
+                val nameCol = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DISPLAY_NAME)
+                while (cursor.moveToNext()) {
+                    val name = cursor.getString(nameCol) ?: continue
+                    if (siteFilter != null && PhotoSiteNameStore.get(this, name) != siteFilter) continue
+                    val id = cursor.getLong(idCol)
                     val uri = android.content.ContentUris.withAppendedId(collection, id)
                     lastCapturedUri = uri
                     updateThumbnail(uri)
+                    return
                 }
             }
         } catch (e: Exception) {
@@ -358,8 +394,17 @@ class StationCameraActivity : AppCompatActivity() {
         if (isVideoMode) {
             if (isRecording) stopRecording() else startRecording()
         } else {
+            playShutterFlash()
             capturePhoto()
         }
+    }
+
+    /** Quick white flash to confirm the shutter was pressed (CameraX file-save can take
+     *  a noticeable moment; without this the user can't tell the tap registered). */
+    private fun playShutterFlash() {
+        shutterFlash.animate().cancel()
+        shutterFlash.alpha = 0.7f
+        shutterFlash.animate().alpha(0f).setDuration(180).start()
     }
 
     private fun capturePhoto() {
@@ -374,9 +419,9 @@ class StationCameraActivity : AppCompatActivity() {
         val values = ContentValues().apply {
             put(MediaStore.Images.Media.DISPLAY_NAME, filename)
             put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg")
-            if (!generalMode && selectedStationName.isNotBlank()) {
-                put(MediaStore.Images.Media.DESCRIPTION, selectedStationName)
-            }
+            // MediaStore.DESCRIPTION dropped: deprecated API 29+, CJK silently mangled on
+            // many devices, and not read by Samsung/Google gallery anyway. PhotoSiteNameStore
+            // (SharedPreferences) is the app's source of truth for siteName.
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                 put(MediaStore.Images.Media.RELATIVE_PATH, "DCIM/Camera")
                 put(MediaStore.Images.Media.IS_PENDING, 1)
@@ -393,10 +438,13 @@ class StationCameraActivity : AppCompatActivity() {
             override fun onImageSaved(results: ImageCapture.OutputFileResults) {
                 val uri = results.savedUri ?: return
                 if (!generalMode) {
+                    PhotoSiteNameStore.save(this@StationCameraActivity, filename, selectedStationName)
                     try {
                         contentResolver.openFileDescriptor(uri, "rw")?.use { pfd ->
                             val exif = ExifInterface(pfd.fileDescriptor)
-                            exif.setAttribute(ExifInterface.TAG_IMAGE_DESCRIPTION, selectedStationName)
+                            // Only GPS — ExifInterface writes TAG_IMAGE_DESCRIPTION as ASCII,
+                            // silently dropping CJK to "?". siteName lives in XMP dc:title
+                            // (via XmpWriter below), which is UTF-8 and portable.
                             val loc = Location("station").apply {
                                 latitude = selectedStationLat
                                 longitude = selectedStationLng
@@ -426,7 +474,7 @@ class StationCameraActivity : AppCompatActivity() {
                 runOnUiThread {
                     Toast.makeText(this@StationCameraActivity, msg, Toast.LENGTH_SHORT).show()
                     shutterButton.isEnabled = true
-                    updateThumbnail(uri)
+                    updateThumbnail(uri, animate = true)
 
                     if (intent?.action == MediaStore.ACTION_IMAGE_CAPTURE ||
                         intent?.action == MediaStore.ACTION_IMAGE_CAPTURE_SECURE) {
@@ -456,9 +504,9 @@ class StationCameraActivity : AppCompatActivity() {
         val values = ContentValues().apply {
             put(MediaStore.Video.Media.DISPLAY_NAME, filename)
             put(MediaStore.Video.Media.MIME_TYPE, "video/mp4")
-            if (!generalMode && selectedStationName.isNotBlank()) {
-                put(MediaStore.Video.Media.DESCRIPTION, selectedStationName)
-            }
+            // MediaStore.DESCRIPTION dropped (deprecated + CJK-unsafe) — same reasoning as
+            // photo capture. Videos don't have an XMP equivalent in this app yet; if needed
+            // the filename prefix `STATIONVID_` signals station-ness on its own.
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                 put(MediaStore.Video.Media.RELATIVE_PATH, "DCIM/Camera")
             }
@@ -512,7 +560,7 @@ class StationCameraActivity : AppCompatActivity() {
         shutterButton.setImageDrawable(null)
     }
 
-    private fun updateThumbnail(uri: Uri) {
+    private fun updateThumbnail(uri: Uri, animate: Boolean = false) {
         try {
             // Read EXIF orientation
             val rotation = contentResolver.openInputStream(uri)?.use { stream ->
@@ -536,6 +584,19 @@ class StationCameraActivity : AppCompatActivity() {
                 thumbnailPreview.setImageBitmap(bitmap)
                 thumbnailPreview.visibility = View.VISIBLE
                 btnEditPhoto.visibility = View.VISIBLE
+                if (animate) {
+                    // Only the post-capture path animates. loadLastPhoto() fires on every
+                    // GPS update (~1/sec) — animating there made the thumbnail keep bouncing.
+                    thumbnailPreview.animate().cancel()
+                    thumbnailPreview.scaleX = 0.3f
+                    thumbnailPreview.scaleY = 0.3f
+                    thumbnailPreview.alpha = 0f
+                    thumbnailPreview.animate()
+                        .scaleX(1f).scaleY(1f).alpha(1f)
+                        .setDuration(300)
+                        .setInterpolator(OvershootInterpolator(2f))
+                        .start()
+                }
             }
         } catch (e: Exception) {
             Log.e(TAG, "thumbnail failed", e)
@@ -543,7 +604,9 @@ class StationCameraActivity : AppCompatActivity() {
     }
 
     private fun openLastCaptured() {
-        startActivity(Intent(this, GalleryActivity::class.java))
+        val intent = Intent(this, GalleryActivity::class.java)
+        lastCapturedUri?.let { intent.putExtra(GalleryActivity.EXTRA_TARGET_URI, it) }
+        startActivity(intent)
     }
 
     private fun editLastCaptured() {
@@ -652,7 +715,7 @@ class StationCameraActivity : AppCompatActivity() {
         selectedStation = best
         selectedStationLat = bestLat
         selectedStationLng = bestLng
-        val nameKey = best.keySet().find { it.contains("名") || it.contains("name", true) || it.contains("站") }
+        val nameKey = StationRepository.pickNameKey(best)
         selectedStationName = nameKey?.let { best.get(it).asString } ?: "未命名站台"
         stationNameText.text = selectedStationName
         stationCoordText.text = String.format(Locale.US, "%.6f, %.6f  (距離 %.0f m)", bestLat, bestLng, bestDist)

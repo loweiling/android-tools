@@ -105,7 +105,7 @@
         <activity
             android:name=".camera.GalleryActivity"
             android:exported="false"
-            android:label="BsMaintain 相簿"
+            android:label="站台相簿"
             android:theme="@style/Theme.BsMaintain" />
 
         <activity

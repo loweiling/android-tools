@@ -216,4 +216,14 @@
             android:textStyle="bold"
             android:visibility="gone" />
     </LinearLayout>
+
+    <!-- 快門視覺回饋：白色全螢幕 overlay，按下快門時 fade 0.7 → 0 -->
+    <View
+        android:id="@+id/shutter_flash"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@android:color/white"
+        android:alpha="0"
+        android:clickable="false"
+        android:focusable="false" />
 </FrameLayout>
